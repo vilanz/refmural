@@ -3,9 +3,23 @@ import { fabric } from "fabric";
 
 export const Canvas = () => {
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
+    const fabricCanvasRef = useRef<fabric.Canvas | null>(null);
+
+    useLayoutEffect(() => {
+      const updateCanvasSize = () => {
+        const fabricCanvas = fabricCanvasRef.current!
+        fabricCanvas.setWidth(window.innerWidth)
+        fabricCanvas.calcOffset()
+      }
+      // desperately needs throttling
+      window.addEventListener('resize', updateCanvasSize)
+      return () => {
+        window.removeEventListener('resize', updateCanvasSize)
+      }
+    }, [])
 
     useEffect(() => {
-      const canvas = new fabric.Canvas(canvasRef.current, {
+      const fabricCanvas = new fabric.Canvas(canvasRef.current, {
         width: window.innerWidth,
         backgroundColor: 'grey'
       });
@@ -16,8 +30,9 @@ export const Canvas = () => {
 
       canvas.add(circle)
 
+      fabricCanvasRef.current = fabricCanvas
       return () => {
-        canvas.dispose();
+        fabricCanvas.dispose();
       }
     }, []);
 
