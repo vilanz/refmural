@@ -1,12 +1,11 @@
 import './App.css'
+import { Canvas } from './canvas'
 
-function App() {
-
+export const App = () => {
   return (
     <div className="App">
       <h1>Refmural</h1>
+      <Canvas />
     </div>
   )
 }
-
-export default App
