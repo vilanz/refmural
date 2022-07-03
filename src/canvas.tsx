@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react"
+import { useEffect, useLayoutEffect, useRef, useState } from "react"
 import { fabric } from "fabric";
 
 export const Canvas = () => {
@@ -24,11 +24,10 @@ export const Canvas = () => {
         backgroundColor: 'grey'
       });
 
-      const circle = new fabric.Circle({
-        radius: 20, fill: 'green', left: 100, top: 100,
-      });
+      fabric.Image.fromURL('https://i.imgur.com/cZsD57S.png', (img) => {
+        fabricCanvas.add(img)
+      })
 
-      canvas.add(circle)
 
       fabricCanvasRef.current = fabricCanvas
       return () => {
