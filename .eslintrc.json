@@ -20,6 +20,7 @@
     "rules": {
         "@typescript-eslint/explicit-function-return-type": 0, // not worth it IMO
         "react/react-in-jsx-scope": 0, // Vite handles this OOTB
-        "@typescript-eslint/no-non-null-assertion": 1 // working with canvas is messy, so this is best as a warning
+        "@typescript-eslint/no-non-null-assertion": 1, // working with canvas is messy, so this is best as a warning
+        "@typescript-eslint/strict-boolean-expressions": 0 // something if (thing) is enough
     }
 }

@@ -2,6 +2,7 @@ html, body {
   background-color: white;
   color: black;
   overflow: hidden;
+  --lightgrey: #eee;
 }
 
 body {

@@ -18,7 +18,7 @@ export const useMural = () => {
 
   useEffect(() => {
     if (fabricCanvas !== null) {
-      loadCanvas()
+      void loadCanvas()
     }
   }, [fabricCanvas])
 
@@ -27,7 +27,6 @@ export const useMural = () => {
   const lastPosY = useRef(0)
   useEffect(() => {
     if (fabricCanvas !== null) {
-      fabricCanvas.freeDrawingBrush = new fabric.PencilBrush(fabricCanvas)
       // Panning and zoom code adapted from http://fabricjs.com/fabric-intro-part-5
       // Pan
       fabricCanvas.on('mouse:down', (opt) => {
