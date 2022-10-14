@@ -9,8 +9,8 @@ const Title = styled.span`
   position: absolute;
   font-size: 32px;
   font-weight: bold;
-  top: 10px;
-  left: 10px;
+  top: 25px;
+  left: 30px;
   z-index: 10;
 `
 

@@ -3,14 +3,23 @@ import { Mural } from './use-mural'
 
 const Wrapper = styled.div`
   position: absolute;
-  top: 10px;
-  left: 160px;
-  background-color: var(--lightgrey);
+  top: 20px;
+  left: 190px;
   padding: 10px;
   border-radius: 10px;
   display: flex;
   gap: 10px;
   z-index: 10;
+`
+
+const Button = styled.button`
+  outline: none;
+  border: 2px solid black;
+  padding: 5px 10px;
+  border-radius: 5px;
+  background: white;
+  color: black;
+  font-weight: bold;
 `
 
 interface ActionsProps {
@@ -34,9 +43,9 @@ export const Actions = ({ mural }: ActionsProps) => {
 
   return (
     <Wrapper>
-      <button onClick={promptAddingAnImage}>Add Image</button>
-      <button onClick={mural.saveCanvas}>Save canvas</button>
-      <button onClick={mural.loadSavedCanvas}>Load canvas</button>
+      <Button onClick={promptAddingAnImage}>Add image</Button>
+      <Button onClick={mural.saveCanvas}>Save</Button>
+      <Button onClick={mural.loadSavedCanvas}>Load</Button>
     </Wrapper>
   )
 }

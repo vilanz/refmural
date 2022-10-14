@@ -13,7 +13,7 @@ npm run dev
 
 - [x] Saving and loading canvases
 - [x] Panning and zooming
-- [ ] Plaid canvas background
+- [x] Plaid canvas background
 - [ ] Multiple canvas tabs
 - [ ] Deploy to GitHub Pages
 - [ ] Drawing on the canvas itself

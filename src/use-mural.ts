@@ -12,7 +12,9 @@ export const useMural = () => {
       width: 3000,
       height: 3000,
       skipOffscreen: true,
-      targetFindTolerance: 50
+      targetFindTolerance: 50,
+      // @ts-expect-error using fabric's Pattern itself is pretty slow, but this is fast
+      backgroundColor: { source: './pattern.png', repeat: 'repeat' }
     }))
   }, [])
 
