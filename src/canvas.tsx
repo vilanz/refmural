@@ -1,6 +1,5 @@
-import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import styled from '@emotion/styled'
-import { fabric } from 'fabric'
+import { Mural } from './use-mural'
 
 const CanvasWrapper = styled.div`
   max-width: 100vw;
@@ -11,25 +10,14 @@ const CanvasWrapper = styled.div`
 const CanvasElement = styled.canvas`
 `
 
-export const Canvas = () => {
-  const [fabricCanvas, setFabricCanvas] = useState<fabric.Canvas | null>(null)
+interface CanvasProps {
+  mural: Mural
+}
 
-  const setupCanvas = useCallback((canvas: HTMLCanvasElement) => {
-    const newFabricCanvas = new fabric.Canvas(canvas, {
-      width: 3000,
-      height: 3000,
-      backgroundColor: 'black'
-    })
-    setFabricCanvas(newFabricCanvas)
-
-    fabric.Image.fromURL('https://i.imgur.com/cZsD57S.png', (img) => {
-      newFabricCanvas?.add(img)
-    })
-  }, [])
-
+export const Canvas = ({ mural }: CanvasProps) => {
   return (
     <CanvasWrapper>
-      <CanvasElement ref={setupCanvas} />
+      <CanvasElement ref={mural.setupCanvas} />
     </CanvasWrapper>
   )
 }
