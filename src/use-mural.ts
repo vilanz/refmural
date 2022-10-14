@@ -33,7 +33,8 @@ export const useMural = () => {
     // Pan
     fabricCanvas.on('mouse:down', (opt) => {
       const { e } = opt
-      if (fabricCanvas.findTarget(e, false) !== undefined) {
+      const clickedOnImage = fabricCanvas.findTarget(e, false) !== undefined
+      if (clickedOnImage) {
         return
       }
       isDraggingRef.current = true
@@ -42,19 +43,20 @@ export const useMural = () => {
       lastPosY.current = e.clientY
     })
     fabricCanvas.on('mouse:move', (opt) => {
-      if (isDraggingRef.current) {
-        const { e } = opt
-        fabricCanvas.viewportTransform![4] += e.clientX - lastPosX.current
-        fabricCanvas.viewportTransform![5] += e.clientY - lastPosY.current
-        fabricCanvas.requestRenderAll()
-        lastPosX.current = e.clientX
-        lastPosY.current = e.clientY
+      if (!isDraggingRef.current) {
+        return
       }
+      const { e } = opt
+      fabricCanvas.viewportTransform![4] += e.clientX - lastPosX.current
+      fabricCanvas.viewportTransform![5] += e.clientY - lastPosY.current
+      fabricCanvas.requestRenderAll()
+      lastPosX.current = e.clientX
+      lastPosY.current = e.clientY
     })
     fabricCanvas.on('mouse:up', () => {
       fabricCanvas.setViewportTransform(fabricCanvas.viewportTransform!)
-      isDraggingRef.current = false
       fabricCanvas.selection = true
+      isDraggingRef.current = false
     })
     // Zoom
     fabricCanvas.on('mouse:wheel', (opt) => {
