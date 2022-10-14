@@ -1,8 +1,9 @@
 import { fabric } from 'fabric'
 import { ChangeEvent } from 'react'
-import './App.css'
 import { Canvas } from './canvas'
 import { useMural } from './use-mural'
+import { createRoot } from 'react-dom/client'
+import './index.css'
 
 export const App = () => {
   const mural = useMural()
@@ -24,3 +25,7 @@ export const App = () => {
     </div>
   )
 }
+
+createRoot(document.getElementById('root')!).render(
+  <App />
+)
