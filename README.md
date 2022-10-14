@@ -14,5 +14,6 @@ npm run dev
 - [x] Saving and loading canvas
 - [x] Panning and zooming
 - [ ] Multiple canvas tabs
+- [ ] Deploy to GitHub Pages
 - [ ] Drawing on the canvas itself
 - [ ] Maybe save stuff to a server?
