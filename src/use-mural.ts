@@ -2,10 +2,11 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { fabric } from 'fabric'
 import { getDataURLFromFile } from './utils'
 
-export const LOCAL_STORAGE_CANVAS_SAVE_KEY = 'fabric-canvas'
+const getLocalStorageKeyForIndex = (index: number) => `fabric-canvas-${index}`
 
 export const useMural = () => {
   const [fabricCanvas, setFabricCanvas] = useState<fabric.Canvas | null>(null)
+  const [selectedCanvasIndex, setSelectedCanvasIndex] = useState(1)
 
   const setupCanvas = useCallback((canvas: HTMLCanvasElement) => {
     setFabricCanvas(new fabric.Canvas(canvas, {
@@ -20,9 +21,9 @@ export const useMural = () => {
 
   useEffect(() => {
     if (fabricCanvas !== null) {
-      void loadSavedCanvas()
+      void loadSavedCanvas(selectedCanvasIndex)
     }
-  }, [fabricCanvas])
+  }, [fabricCanvas, selectedCanvasIndex])
 
   const isDraggingRef = useRef(false)
   const lastPosX = useRef(0)
@@ -76,18 +77,24 @@ export const useMural = () => {
     const fileDataURL = await getDataURLFromFile(file)
     fabric.Image.fromURL(fileDataURL, (img) => {
       fabricCanvas?.add(img)
+      saveCanvas()
     })
   }, [fabricCanvas])
 
   const saveCanvas = () => {
     const fabricCanvasJsonString = JSON.stringify(fabricCanvas?.toJSON())
-    localStorage.setItem(LOCAL_STORAGE_CANVAS_SAVE_KEY, fabricCanvasJsonString)
+    localStorage.setItem(getLocalStorageKeyForIndex(selectedCanvasIndex), fabricCanvasJsonString)
   }
 
-  const loadSavedCanvas = useCallback(async () => {
-    const fabricCanvasJsonString = localStorage.getItem(LOCAL_STORAGE_CANVAS_SAVE_KEY)
+  const loadSavedCanvas = useCallback(async (index: number) => {
+    const fabricCanvasJsonString = localStorage.getItem(getLocalStorageKeyForIndex(index))
     if (fabricCanvasJsonString !== null) {
-      fabricCanvas?.loadFromJSON(JSON.parse(fabricCanvasJsonString), () => {})
+      fabricCanvas?.loadFromJSON(JSON.parse(fabricCanvasJsonString), () => {
+        fabricCanvas.renderAll()
+      })
+    } else {
+      // fabricCanvas.clear() will clear even the background
+      fabricCanvas?.forEachObject((obj) => fabricCanvas.remove(obj))
     }
   }, [fabricCanvas])
 
@@ -96,7 +103,8 @@ export const useMural = () => {
     setupCanvas,
     addImage,
     saveCanvas,
-    loadSavedCanvas
+    loadSavedCanvas,
+    setSelectedCanvasIndex
   }
 }
 

@@ -20,6 +20,7 @@ const Button = styled.button`
   background: white;
   color: black;
   font-weight: bold;
+  cursor: pointer;
 `
 
 interface ActionsProps {
@@ -41,11 +42,17 @@ export const Actions = ({ mural }: ActionsProps) => {
     fileInput.click()
   }
 
+  const setIndex = (n: number) => () => {
+    mural.setSelectedCanvasIndex(n)
+  }
+
   return (
     <Wrapper>
       <Button onClick={promptAddingAnImage}>Add image</Button>
       <Button onClick={mural.saveCanvas}>Save</Button>
-      <Button onClick={mural.loadSavedCanvas}>Load</Button>
+      <Button onClick={setIndex(1)}>Canvas 1</Button>
+      <Button onClick={setIndex(2)}>Canvas 2</Button>
+      <Button onClick={setIndex(3)}>Canvas 3</Button>
     </Wrapper>
   )
 }
