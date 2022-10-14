@@ -1,0 +1,25 @@
+{
+    "env": {
+        "browser": true,
+        "es2021": true
+    },
+    "extends": [
+        "plugin:react/recommended",
+        "standard-with-typescript"
+    ],
+    "overrides": [
+    ],
+    "parserOptions": {
+        "ecmaVersion": "latest",
+        "sourceType": "module",
+        "project": "./tsconfig.json"
+    },
+    "plugins": [
+        "react"
+    ],
+    "rules": {
+        "@typescript-eslint/explicit-function-return-type": 0, // not worth it IMO
+        "react/react-in-jsx-scope": 0, // Vite handles this OOTB
+        "@typescript-eslint/no-non-null-assertion": 1 // working with canvas is messy, so this is best as a warning
+    }
+}
