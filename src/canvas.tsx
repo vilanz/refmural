@@ -1,40 +1,35 @@
-import { useEffect, useLayoutEffect, useRef } from 'react'
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react'
+import styled from '@emotion/styled'
 import { fabric } from 'fabric'
 
+const CanvasWrapper = styled.div`
+  max-width: 100vw;
+  max-height: 600px;
+  overflow: scroll;
+`
+
+const CanvasElement = styled.canvas`
+`
+
 export const Canvas = () => {
-  const canvasRef = useRef<HTMLCanvasElement | null>(null)
-  const fabricCanvasRef = useRef<fabric.Canvas | null>(null)
+  const [fabricCanvas, setFabricCanvas] = useState<fabric.Canvas | null>(null)
 
-  useLayoutEffect(() => {
-    const updateCanvasSize = () => {
-      const fabricCanvas = fabricCanvasRef.current!
-      fabricCanvas.setWidth(window.innerWidth)
-      fabricCanvas.calcOffset()
-    }
-    // desperately needs throttling
-    window.addEventListener('resize', updateCanvasSize)
-    return () => {
-      window.removeEventListener('resize', updateCanvasSize)
-    }
-  }, [])
-
-  useEffect(() => {
-    const fabricCanvas = new fabric.Canvas(canvasRef.current, {
-      width: window.innerWidth,
-      backgroundColor: 'grey'
+  const setupCanvas = useCallback((canvas: HTMLCanvasElement) => {
+    const newFabricCanvas = new fabric.Canvas(canvas, {
+      width: 3000,
+      height: 3000,
+      backgroundColor: 'black'
     })
+    setFabricCanvas(newFabricCanvas)
 
     fabric.Image.fromURL('https://i.imgur.com/cZsD57S.png', (img) => {
-      fabricCanvas.add(img)
+      newFabricCanvas?.add(img)
     })
-
-    fabricCanvasRef.current = fabricCanvas
-    return () => {
-      fabricCanvas.dispose()
-    }
   }, [])
 
   return (
-        <canvas height={400} width={400} ref={canvasRef} />
+    <CanvasWrapper>
+      <CanvasElement ref={setupCanvas} />
+    </CanvasWrapper>
   )
 }
