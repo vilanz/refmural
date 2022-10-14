@@ -24,7 +24,7 @@ export const Actions = ({ mural }: ActionsProps) => {
     const onFileChange = () => {
       const file = fileInput.files?.[0]
       if (file) {
-        void mural.addFile(file)
+        void mural.addImage(file)
       }
       fileInput.removeEventListener('change', onFileChange)
     }
@@ -36,7 +36,7 @@ export const Actions = ({ mural }: ActionsProps) => {
     <Wrapper>
       <button onClick={promptAddingAnImage}>Add Image</button>
       <button onClick={mural.saveCanvas}>Save canvas</button>
-      <button onClick={mural.loadCanvas}>Load canvas</button>
+      <button onClick={mural.loadSavedCanvas}>Load canvas</button>
     </Wrapper>
   )
 }

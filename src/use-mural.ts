@@ -18,7 +18,7 @@ export const useMural = () => {
 
   useEffect(() => {
     if (fabricCanvas !== null) {
-      void loadCanvas()
+      void loadSavedCanvas()
     }
   }, [fabricCanvas])
 
@@ -26,50 +26,51 @@ export const useMural = () => {
   const lastPosX = useRef(0)
   const lastPosY = useRef(0)
   useEffect(() => {
-    if (fabricCanvas !== null) {
-      // Panning and zoom code adapted from http://fabricjs.com/fabric-intro-part-5
-      // Pan
-      fabricCanvas.on('mouse:down', (opt) => {
+    if (fabricCanvas === null) {
+      return
+    }
+    // Panning and zoom code adapted from http://fabricjs.com/fabric-intro-part-5
+    // Pan
+    fabricCanvas.on('mouse:down', (opt) => {
+      const { e } = opt
+      if (fabricCanvas.findTarget(e, false) !== undefined) {
+        return
+      }
+      isDraggingRef.current = true
+      fabricCanvas.selection = false
+      lastPosX.current = e.clientX
+      lastPosY.current = e.clientY
+    })
+    fabricCanvas.on('mouse:move', (opt) => {
+      if (isDraggingRef.current) {
         const { e } = opt
-        if (fabricCanvas.findTarget(e, false) !== undefined) {
-          return
-        }
-        isDraggingRef.current = true
-        fabricCanvas.selection = false
+        fabricCanvas.viewportTransform![4] += e.clientX - lastPosX.current
+        fabricCanvas.viewportTransform![5] += e.clientY - lastPosY.current
+        fabricCanvas.requestRenderAll()
         lastPosX.current = e.clientX
         lastPosY.current = e.clientY
-      })
-      fabricCanvas.on('mouse:move', (opt) => {
-        if (isDraggingRef.current) {
-          const { e } = opt
-          fabricCanvas.viewportTransform![4] += e.clientX - lastPosX.current
-          fabricCanvas.viewportTransform![5] += e.clientY - lastPosY.current
-          fabricCanvas.requestRenderAll()
-          lastPosX.current = e.clientX
-          lastPosY.current = e.clientY
-        }
-      })
-      fabricCanvas.on('mouse:up', () => {
-        fabricCanvas.setViewportTransform(fabricCanvas.viewportTransform!)
-        isDraggingRef.current = false
-        fabricCanvas.selection = true
-      })
-      // Zoom
-      fabricCanvas.on('mouse:wheel', (opt) => {
-        const { e } = opt
-        let zoom = fabricCanvas.getZoom() * (0.999 ** e.deltaY)
-        if (zoom > 20) zoom = 20
-        if (zoom < 0.01) zoom = 0.01
-        fabricCanvas.zoomToPoint({ x: e.offsetX, y: e.offsetY }, zoom)
-        e.preventDefault()
-        e.stopPropagation()
-      })
-    }
+      }
+    })
+    fabricCanvas.on('mouse:up', () => {
+      fabricCanvas.setViewportTransform(fabricCanvas.viewportTransform!)
+      isDraggingRef.current = false
+      fabricCanvas.selection = true
+    })
+    // Zoom
+    fabricCanvas.on('mouse:wheel', (opt) => {
+      const { e } = opt
+      let zoom = fabricCanvas.getZoom() * (0.999 ** e.deltaY)
+      if (zoom > 20) zoom = 20
+      if (zoom < 0.01) zoom = 0.01
+      fabricCanvas.zoomToPoint({ x: e.offsetX, y: e.offsetY }, zoom)
+      e.preventDefault()
+      e.stopPropagation()
+    })
   }, [fabricCanvas])
 
-  const addFile = useCallback(async (file: File) => {
-    const dataURL = await getDataURLFromFile(file)
-    fabric.Image.fromURL(dataURL, (img) => {
+  const addImage = useCallback(async (file: File) => {
+    const fileDataURL = await getDataURLFromFile(file)
+    fabric.Image.fromURL(fileDataURL, (img) => {
       fabricCanvas?.add(img)
     })
   }, [fabricCanvas])
@@ -79,7 +80,7 @@ export const useMural = () => {
     localStorage.setItem(LOCAL_STORAGE_CANVAS_SAVE_KEY, fabricCanvasJsonString)
   }
 
-  const loadCanvas = useCallback(async () => {
+  const loadSavedCanvas = useCallback(async () => {
     const fabricCanvasJsonString = localStorage.getItem(LOCAL_STORAGE_CANVAS_SAVE_KEY)
     if (fabricCanvasJsonString !== null) {
       fabricCanvas?.loadFromJSON(JSON.parse(fabricCanvasJsonString), () => {})
@@ -89,9 +90,9 @@ export const useMural = () => {
   return {
     fabricCanvas,
     setupCanvas,
-    addFile,
+    addImage,
     saveCanvas,
-    loadCanvas
+    loadSavedCanvas
   }
 }
 
