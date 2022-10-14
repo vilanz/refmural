@@ -1,5 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { fabric } from 'fabric'
+import { getDataURLFromFile } from './utils'
+
+export const LOCAL_STORAGE_CANVAS_SAVE_KEY = 'fabric-canvas'
 
 export const useMural = () => {
   const [fabricCanvas, setFabricCanvas] = useState<fabric.Canvas | null>(null)
@@ -8,17 +11,23 @@ export const useMural = () => {
     setFabricCanvas(new fabric.Canvas(canvas, {
       width: 3000,
       height: 3000,
-      backgroundColor: 'black',
       skipOffscreen: true,
       targetFindTolerance: 50
     }))
   }, [])
+
+  useEffect(() => {
+    if (fabricCanvas !== null) {
+      loadCanvas()
+    }
+  }, [fabricCanvas])
 
   const isDraggingRef = useRef(false)
   const lastPosX = useRef(0)
   const lastPosY = useRef(0)
   useEffect(() => {
     if (fabricCanvas !== null) {
+      fabricCanvas.freeDrawingBrush = new fabric.PencilBrush(fabricCanvas)
       // Panning and zoom code adapted from http://fabricjs.com/fabric-intro-part-5
       // Pan
       fabricCanvas.on('mouse:down', (opt) => {
@@ -59,17 +68,31 @@ export const useMural = () => {
     }
   }, [fabricCanvas])
 
-  const addFile = useCallback((file: File) => {
-    const fileURL = URL.createObjectURL(file)
-    fabric.Image.fromURL(fileURL, (img) => {
+  const addFile = useCallback(async (file: File) => {
+    const dataURL = await getDataURLFromFile(file)
+    fabric.Image.fromURL(dataURL, (img) => {
       fabricCanvas?.add(img)
     })
+  }, [fabricCanvas])
+
+  const saveCanvas = () => {
+    const fabricCanvasJsonString = JSON.stringify(fabricCanvas?.toJSON())
+    localStorage.setItem(LOCAL_STORAGE_CANVAS_SAVE_KEY, fabricCanvasJsonString)
+  }
+
+  const loadCanvas = useCallback(async () => {
+    const fabricCanvasJsonString = localStorage.getItem(LOCAL_STORAGE_CANVAS_SAVE_KEY)
+    if (fabricCanvasJsonString !== null) {
+      fabricCanvas?.loadFromJSON(JSON.parse(fabricCanvasJsonString), () => {})
+    }
   }, [fabricCanvas])
 
   return {
     fabricCanvas,
     setupCanvas,
-    addFile
+    addFile,
+    saveCanvas,
+    loadCanvas
   }
 }
 
