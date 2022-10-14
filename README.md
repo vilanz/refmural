@@ -11,8 +11,9 @@ npm run dev
 
 ## Planned features
 
-- [x] Saving and loading canvas
+- [x] Saving and loading canvases
 - [x] Panning and zooming
+- [ ] Plaid canvas background
 - [ ] Multiple canvas tabs
 - [ ] Deploy to GitHub Pages
 - [ ] Drawing on the canvas itself
